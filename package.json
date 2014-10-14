@@ -1,0 +1,25 @@
+{
+  "name": "queryjs",
+  "version": "0.0.1",
+  "description": "a lib to control js",
+  "main": "index.js",
+  "scripts": {
+    "test": "./node_modules/mocha/bin/mocha ./test/test.js"
+  },
+  "keywords": [
+    "js",
+    "selector",
+    "query"
+  ],
+  "dependencies": {
+    "escodegen": "~1.4.0",
+    "underscore": "~1.6.0"
+  },
+  "devDependencies": {
+    "underscore": "~1.6.0",
+    "escodegen": "~1.4.0",
+    "mocha": "~1.21.5"
+  },  
+  "author": "xhzhuweikang@163.com",
+  "license": "MIT"
+}
