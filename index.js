@@ -4,97 +4,121 @@ var escodegen = require("escodegen");
 
 var _ = require('underscore');
 
+//https://github.com/jashkenas/underscore/issues/162
+_.deepClone = function(obj, depth) {
+	if (typeof obj !== 'object') return obj;
+	if (_.isString(obj)) return obj.splice();
+	if (_.isDate(obj)) return new Date(obj.getTime());
+	if (_.isFunction(obj.clone)) return obj.clone();
+	var clone = _.isArray(obj) ? obj.slice() : _.extend({}, obj);
+	if (!_.isUndefined(depth) && (depth > 0)) {
+		for (var key in clone) {
+			clone[key] = _.deepClone(clone[key], depth - 1);
+		}
+	}
+	return clone;
+};
 
 
-function matchCallExpression(jsNode, reg) {
-
-	var astNode = jsNode.astObj;
-	var callString = "";
-	var oriArguments = astNode.arguments;
-	astNode.arguments = [];
-	callString = escodegen.generate(astNode);
-	//console.log(escodegen.generate(astNode));
-	astNode.arguments = oriArguments;
-
-	return reg.test(callString);
-
-}
 
 
-function matchFunctionDeclaration(jsNode, reg) {
-	var astNode = jsNode.astObj;
-	var identify = astNode.id.name;
+OPTIONS = null;
+JS_STRING = '';
+MATCH_HASH = (function(){
 
-	return reg.test(identify);
-}
+	function matchCallExpression(jsNode, reg) {
 
+		var astNode = jsNode.astObj;
+		var callString = "";
+		var oriArguments = astNode.arguments;
+		astNode.arguments = [];
+		callString = escodegen.generate(astNode);
+		//console.log(escodegen.generate(astNode));
+		astNode.arguments = oriArguments;
 
-function matchForStatement(jsNode, reg) {
+		return reg.test(callString);
 
-	var astNode = jsNode.astObj;
-	var oriBody = astNode.body;
-	astNode.body = {
-        "type": "BlockStatement",
-        "body": []
-    };
-	var testString = escodegen.generate(astNode);
-	astNode.body = oriBody;
-
-	return reg.test(testString);
-}
-
-function matchIfStatement(jsNode,reg){
-	var astNode = jsNode.astObj;
-	var testString = escodegen.generate(astNode.test);
-
-	return reg.test(testString);
-}
-function matchWhileStatement(jsNode,reg){
-	var astNode = jsNode.astObj;
-	var testString = escodegen.generate(astNode.test);
-
-	return reg.test(testString);
-}
-
-function matchIdetify(jsNode, reg){
-	var astNode = jsNode.astObj;
-	var parentAstNode = jsNode.parentJsNode.astObj;
-
-	if (parentAstNode.type == "VariableDeclarator") {
-		return reg.test(parentAstNode.id.name);
 	}
 
-	if (parentAstNode.type == "Property") {
-		return reg.test(parentAstNode.key.name);
+
+	function matchFunctionDeclaration(jsNode, reg) {
+		var astNode = jsNode.astObj;
+		var identify = astNode.id.name;
+
+		return reg.test(identify);
 	}
 
-	if (parentAstNode.type == "AssignmentExpression") {
-		return reg.test(escodegen.generate(parentAstNode.left));
+
+	function matchForStatement(jsNode, reg) {
+
+		var astNode = jsNode.astObj;
+		var oriBody = astNode.body;
+		astNode.body = {
+	        "type": "BlockStatement",
+	        "body": []
+	    };
+		var testString = escodegen.generate(astNode);
+		astNode.body = oriBody;
+
+		return reg.test(testString);
 	}
 
-	return false;
+	function matchIfStatement(jsNode,reg){
+		var astNode = jsNode.astObj;
+		var testString = escodegen.generate(astNode.test);
 
-}
+		return reg.test(testString);
+	}
+	function matchWhileStatement(jsNode,reg){
+		var astNode = jsNode.astObj;
+		var testString = escodegen.generate(astNode.test);
 
-function matchString(jsNode, reg) {
-	var astNode = jsNode.astObj;
-	var testString = escodegen.generate(astNode);
+		return reg.test(testString);
+	}
 
-	return reg.test(testString);
+	function matchIdetify(jsNode, reg){
+		var astNode = jsNode.astObj;
+		var parentAstNode = jsNode.parentJsNode.astObj;
+
+		if (parentAstNode.type == "VariableDeclarator") {
+			return reg.test(parentAstNode.id.name);
+		}
+
+		if (parentAstNode.type == "Property") {
+			return reg.test(parentAstNode.key.name);
+		}
+
+		if (parentAstNode.type == "AssignmentExpression") {
+			return reg.test(escodegen.generate(parentAstNode.left));
+		}
+
+		return false;
+
+	}
+
+	function matchString(jsNode, reg) {
+		var astNode = jsNode.astObj;
+		var testString = escodegen.generate(astNode);
+
+		return reg.test(testString);
 
 
-} 	
+	}
 
-MATCH_HASH = {
-	'CallExpression': matchCallExpression,
-	'ObjectExpression': matchIdetify,
-	'FunctionExpression': matchIdetify,
-	'ArrayExpression': matchIdetify,
-	'FunctionDeclaration': matchFunctionDeclaration,
-	'IfStatement': matchIfStatement,
-	'ForStatement': matchForStatement,
-	'WhileStatement': matchWhileStatement
-}
+	return {
+		'CallExpression': matchCallExpression,
+		'ObjectExpression': matchIdetify,
+		'FunctionExpression': matchIdetify,
+		'ArrayExpression': matchIdetify,
+		'FunctionDeclaration': matchFunctionDeclaration,
+		'IfStatement': matchIfStatement,
+		'ForStatement': matchForStatement,
+		'WhileStatement': matchWhileStatement,
+		'string':matchString
+	}
+
+
+})();
 
 
 var walkBase = walk.make({
@@ -141,24 +165,107 @@ function matchJsNode(jsNode, reg) {
 	var astNode = jsNode.astObj;
 	var type = astNode.type;
 	//默认 字符串匹配
-	var matchFn = _.has(MATCH_HASH,type) ? MATCH_HASH[type] : matchString;
+	var matchFn = _.has(MATCH_HASH,type) ? MATCH_HASH[type] : MATCH_HASH['string'];
 
 	return matchFn(jsNode, reg);
 
 
 }
 
+
+MANAGE_HASH = []
+
+//当原始的语法树做出了修改，需要记录下来修改点.
+//astObj为空代表删除
+//start == end 代表新增加
+function _posUpdate(start,end,astObjs){
+
+	MANAGE_HASH.push({
+		start:start,
+		end:end,
+		astObjs:astObjs
+	})
+
+
+}
+
+
+function _replaceStr(oriStr,start,end,str){
+	var pre,next;
+	pre = oriStr.substring(0,start);
+	next = oriStr.substring(end);
+
+	return pre + str + next;
+
+}
+//用来通过jsnode生成代码，保留原有格式。
+//由于树型结构的特殊性，所以只会有包含的关系，不会存在交叉的问题
+function _generateCode(jsnode){
+	var lastPos,curStr,plusNum,codeStart,codeEnd,oriStr,curManageHash;
+
+	
+	
+	codeStart = jsnode.astObj.start;
+	codeEnd = jsnode.astObj.end;
+
+	if(codeStart==false&&codeEnd==false){
+		//如果是新增的节点，直接返回
+		return _astobj2string(jsnode.astObj);
+	}
+
+	oriStr = JS_STRING.substring(codeStart,codeEnd);
+
+
+	//筛选出来受到影响的，操作。
+	curManageHash = _.filter(MANAGE_HASH,function(obj){
+		return obj.start >= codeStart;
+	})
+
+
+	//排序
+	
+	curManageHash.sort(function(p,n){
+		return p.start > n.start;
+	})
+
+
+	lastPos = 0;
+	plusNum = 0;
+
+	_.each(curManageHash,function(manageObj){
+
+		if(manageObj.start + plusNum < lastPos) return;
+
+		curStr = _astobj2string(manageObj.astObjs);
+		
+		oriStr = _replaceStr(oriStr,manageObj.start + plusNum - codeStart,manageObj.end + plusNum - codeStart,curStr);
+		//更新浮标
+		plusNum += curStr.length;
+		lastPos = manageObj.end + plusNum;
+
+	})
+
+	return oriStr;
+
+}
+
+function _astobj2string(astObjs){
+	var tmpStr = '';
+	astObjs = _.isArray(astObjs) ? astObjs : [astObjs];
+
+	_.each(astObjs,function(astObj){
+		tmpStr += escodegen.generate(astObj)
+
+	})
+
+	return tmpStr;
+}
+
 function _isStatement(jsnode){
 	//Declaration is also a statement
-	//debugger
 	var type = _.isString(jsnode) ? jsnode : jsnode.astObj.type;
 	return /[a-zA-Z]+(Statement|Declaration)/.test(type);
 }
-
-// function _nodesTransfer(nodelist,type){
-// 	if(type && type == )
-
-// }
 
 function _nodesTransferExpression(nodelist){
 	var newAstNodes;
@@ -168,23 +275,35 @@ function _nodesTransferExpression(nodelist){
 		
 	}else{
 		newAstNodes = _.map(nodelist.getNodes(),function(jsNode){
-			return jsNode.astObj;
+			return JSON.parse(JSON.stringify(jsNode.astObj));
+
 		})
 	}
-	return newAstNodes;
+	//将start end置为空 标识是新增的节点
+	return _.map(newAstNodes,function(newAst){
+		newAst['start'] = false;
+		newAst['end'] = false;
+		return newAst;
+	});
 }
 function _nodesTransferStatement(nodelist){
 	var newAstNodes;
 	if (_.isString(nodelist)) {
-			newAstNodes = acorn.parse(nodelist, {
-				ranges: true
-			}).body;
+		newAstNodes = acorn.parse(nodelist, {
+			ranges: true
+		}).body;
 	}else{
 		newAstNodes = _.map(nodelist.getNodes(),function(jsNode){
-			return jsNode.astObj;
+			return JSON.parse(JSON.stringify(jsNode.astObj));
 		})
 	}
-	return newAstNodes;
+
+
+	return _.map(newAstNodes,function(newAst){
+		newAst['start'] = false;
+		newAst['end'] = false;
+		return newAst;
+	});
 }
 
 function JsNode(astObj,parentJsNode) {
@@ -246,14 +365,6 @@ JsNode.prototype.replaceWith = function(nodelist) {
 	}else{
 		newAstNodes = _nodesTransferExpression(nodelist);
 	}
-	// if(walk){
-	// 	var tempAstNodes = [];
-	// 	_.each(newAstNodes,function(astNode){
-	// 		var findedJsNodes = new JsNode(astNode).find(curAstNode.type);
-	// 		if(findedJsNodes.length > 0) tempAstNodes.push(findedJsNodes[0].astObj);
-	// 	});
-	// 	newAstNodes = tempAstNodes;
-	// }
 	 
 	_.each(parentAstNode,function(v,k){
 	 	if (_.isObject(v) && v == curAstNode) {
@@ -277,10 +388,15 @@ JsNode.prototype.replaceWith = function(nodelist) {
 }
 
 JsNode.prototype.stringify = function() {
+	//不需要保持以前的格式
+	if(OPTIONS.removeSpace){
+		return _astobj2string(this.astObj);
+	}else{
 
-	return escodegen.generate(this.astObj, {
-		comment: true
-	});
+		return _generateCode(this);
+
+	}
+	
 
 }
 
@@ -301,7 +417,7 @@ JsNode.prototype.getCurrentStatement = function() {
 }
 
 
-var methodFactory = (function(){
+MATCH_FACTORY = (function(){
 
 	var _append = function(nodelist){
 		var curJsNode = this;
@@ -314,6 +430,10 @@ var methodFactory = (function(){
 
 		var newAstNodes = _nodesTransferStatement(nodelist);
 		block.body = block.body.concat(newAstNodes);
+
+
+		_posUpdate(block.end-1,block.end-1,newAstNodes);
+
 
 		return curJsNode;
 
@@ -329,6 +449,8 @@ var methodFactory = (function(){
 
 		var newAstNodes = _nodesTransferStatement(nodelist);
 		block.body = newAstNodes.concat(block.body);
+
+		_posUpdate(block.start+1,block.start+1,newAstNodes);
 
 		return curJsNode;
 
@@ -567,6 +689,8 @@ var methodFactory = (function(){
 
 })();
 
+
+
 function proxy(method) {
 
 	return function() {
@@ -578,7 +702,7 @@ function proxy(method) {
 			var returnNodes = null;
 			var methodFn = null;
 
-			methodFn = methodFactory.getFn(jsNode,method);
+			methodFn = MATCH_FACTORY.getFn(jsNode,method);
 			if (!methodFn) return;
 
 			returnNodes = methodFn.apply(jsNode, args);
@@ -603,7 +727,7 @@ function JsNodeList(jsNodes) {
 		self[k] = v;
 	});
 
-	var methods =_.difference(methodFactory.getAllMethods(),_.keys(JsNodeList.prototype));
+	var methods =_.difference(MATCH_FACTORY.getAllMethods(),_.keys(JsNodeList.prototype));
 	_.map(methods, function(method) {
 		self[method] = proxy(method);
 	})
@@ -632,9 +756,16 @@ JsNodeList.prototype.stringify = function() {
 	return jsString;
 }
 
-
-exports.transfer = function(jsString) {
-
+/**
+ * [transfer description]
+ * @param  {[string]} jsString [需要解析的字符串]
+ * @param  {[object]} options  [配置项]
+ * @param {[boolean]} options.removeSpace [是否去掉各种空格，为true的话会清楚以前的格式。解析也更快]
+ * @return {[JsNodeList]}      [JsNodeList对象，可以使用提供的一系列方法]
+ */
+exports.transfer = function(jsString,options) {
+	OPTIONS = options || {};
+	JS_STRING = jsString;
 	var comments = [];
 
 	var newAstNode = acorn.parse(jsString, {

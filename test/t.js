@@ -8,4 +8,4 @@ var testStr = require('fs').readFileSync('./test/simple.js').toString();
 var root = t.transfer(testStr);
 
 
-console.log(root.find('ForStatement','a').append('var test = 1;').find('VariableDeclaration','test').stringify());
+console.log(root.find('ForStatement','a').append('var test = 1;').prepend('var aa = 1;').stringify());

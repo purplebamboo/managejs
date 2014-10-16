@@ -1,11 +1,13 @@
 var assert = require("assert")
 var t = require('../index.js')
 
+var basicTestStr,testNode,testNode2,node
+
 describe('basic',function(){
-	var basicTestStr,testNode
+	
 	beforeEach(function(){
 		basicTestStr = require('fs').readFileSync('./test/simple.js').toString()
-		testNode = t.transfer(basicTestStr)
+		testNode = t.transfer(basicTestStr,{removeSpace:true})
 	})
 
 	describe('#find',function(){
@@ -34,7 +36,6 @@ describe('basic',function(){
 })
 
 describe('Function',function(){
-	var basicTestStr,testNode
 
 	beforeEach(function(){
 		basicTestStr = require('fs').readFileSync('./test/function.js').toString()
@@ -91,7 +92,6 @@ describe('Function',function(){
 
 
 describe('ObjectExpression',function(){
-	var basicTestStr,testNode
 	beforeEach(function(){
 		basicTestStr = require('fs').readFileSync('./test/objectExpression.js').toString()
 		testNode = t.transfer(basicTestStr)
@@ -122,7 +122,6 @@ describe('ObjectExpression',function(){
 })
 
 describe('ArrayExpression',function(){
-	var basicTestStr,testNode,node
 	beforeEach(function(){
 		basicTestStr = require('fs').readFileSync('./test/arrayExpression.js').toString()
 		testNode = t.transfer(basicTestStr)
@@ -154,7 +153,6 @@ describe('ArrayExpression',function(){
 
 
 describe('IfStatement ForStatement WhileStatement',function(){
-	var basicTestStr,testNode,node
 	beforeEach(function(){
 		basicTestStr = require('fs').readFileSync('./test/simple.js').toString()
 		testNode = t.transfer(basicTestStr)
