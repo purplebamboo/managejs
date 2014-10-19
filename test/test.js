@@ -3,16 +3,16 @@ var t = require('../index.js')
 
 var basicTestStr,testNode,testNode2,node
 
-describe('basic',function(){
+describe('common',function(){
 	
 	beforeEach(function(){
 		basicTestStr = require('fs').readFileSync('./test/simple.js').toString()
-		testNode = t.transfer(basicTestStr,{removeSpace:true})
+		testNode = t.transfer(basicTestStr)
 	})
 
 	describe('#find',function(){
 		it('check length',function(){ 
-      assert.equal(2, testNode.find('ObjectExpression','test*').length)		
+      		assert.equal(2, testNode.find('ObjectExpression','test*').length)		
 		})
 
 		it('find by type witout idenfier',function(){
@@ -20,6 +20,31 @@ describe('basic',function(){
 		})
 		
 	})
+
+	describe('#findById',function(){
+		it('use id to find node',function(){
+			assert.equal(1,testNode.findById('WhileStatement','2').length)
+			assert.equal('while(2){}',testNode.findByString('WhileStatement','2').stringify().replace(/\s/g,''))
+		})
+	})
+
+	describe('#findByString',function(){
+		it('use string to find node',function(){
+			assert.equal(1,testNode.findByString('WhileStatement','2').length)
+			assert.equal('while(2){}',testNode.findByString('WhileStatement','2').stringify().replace(/\s/g,''))
+
+		})
+	})
+
+	describe('#findByFn',function(){
+		it('use fn to find node',function(){
+			assert.equal(1,testNode.findByFn('FunctionDeclaration',function(jsNode){
+				return jsNode.astObj.id.name == 'aa'
+
+			}).length)
+		})
+	})
+
 	describe('#stringify',function(){
 		it('stringify will translate the ast to string',function(){
 			assert.equal('View.superclass.constructor.apply(this, arguments)', testNode.find('CallExpression','superclass.constructor').stringify())
@@ -27,11 +52,38 @@ describe('basic',function(){
 		})
 
 		it('result strings will connect if there are more than one result nodes',function(){
-			assert.equal("'hello''hello world'", testNode.find('ObjectExpression','test').find('Literal','hello').stringify())
+			assert.equal("'hello world''hello'", testNode.find('ObjectExpression','test').find('Literal','hello').stringify())
 			
 		})
 		
 	})
+
+	describe('#insertBefore',function(){
+		it('use insertBefore to change node',function(){
+			var t = testNode.findById('WhileStatement','2')
+			var ob = testNode.findById('ObjectExpression','test2').getCurrentStatement()
+			t.insertBefore(ob)
+			assert.equal(2,testNode.find('WhileStatement','2').length)
+		})
+	})
+
+	describe('#insertAfter',function(){
+		it('use insertAfter to change node',function(){
+			var t = testNode.findById('WhileStatement','2')
+			var ob = testNode.findById('ObjectExpression','test2').getCurrentStatement()
+			t.insertAfter(ob)
+			assert.equal(2,testNode.find('WhileStatement','2').length)
+		})
+	})
+
+	describe('#item',function(){
+		it('use item to get a new nodelist through index',function(){
+			var ob = testNode.findById('ObjectExpression','test')
+			assert.equal("'hello world'",ob.item(0).get('mn').stringify())
+		})
+	})
+
+	
 
 })
 
@@ -106,17 +158,25 @@ describe('ObjectExpression',function(){
 
 	describe('#add',function(){
 		it('use add to add property',function(){
-			var node = testNode.find('ObjectExpression','test')
+			node = testNode.find('ObjectExpression','test')
 			node.add('a',"'hahaha'")
 			assert.equal("'hahaha'",node.get('a').stringify())
 		})
 	})
 
 	describe('#remove',function(){
+
 		it('use remove to remove property',function(){
-			var node = testNode.find('ObjectExpression','test')
+			node = testNode.find('ObjectExpression','test')
 			node.remove('m')
 			assert.equal(0,node.find('m').length)
+		})
+		it('test only one key',function(){
+
+			node = testNode.find('ObjectExpression','test')
+			node.remove('m')
+			node.remove('n')
+			assert.equal('{}',node.stringify())
 		})
 	})
 })
@@ -124,28 +184,28 @@ describe('ObjectExpression',function(){
 describe('ArrayExpression',function(){
 	beforeEach(function(){
 		basicTestStr = require('fs').readFileSync('./test/arrayExpression.js').toString()
-		testNode = t.transfer(basicTestStr)
-		node = testNode.find('ArrayExpression','test')
+		testArrayNode = t.transfer(basicTestStr)
+		arrayNode = testArrayNode.find('ArrayExpression','test')
 	})
 
 
 	describe('#get',function(){
 		it('use get to get node through index',function(){
-			assert.equal('1',node.get(1).stringify())
+			assert.equal('1',arrayNode.get(1).stringify())
 		})
 	})
 
 	describe('#splice',function(){
 		it('use splice to manage like array',function(){
-			node.splice(1,1,'haha')
-			assert.equal('haha',node.get(1).stringify())
+			arrayNode.splice(1,1,'haha')
+			assert.equal('haha',arrayNode.get(1).stringify())
 		})
 	})
 
 	describe('#push',function(){
 		it('use push to add node',function(){
-			node.push('function(){}')
-			assert.equal('function(){}',node.get(-1).stringify().replace(/\s/g,''))
+			arrayNode.push('function(){}')
+			assert.equal('function(){}',arrayNode.get(-1).stringify().replace(/\s/g,''))
 		})
 	})
 	
@@ -169,7 +229,7 @@ describe('IfStatement ForStatement WhileStatement',function(){
 
 	describe('#prepend',function(){
 		it('use prepend',function(){
-			node = testNode.find('ForStatement','a').append('var app = 1;')
+			node = testNode.find('ForStatement','a').prepend('var app = 1;')
 			assert.equal(1,node.find('VariableDeclaration','app').length)
 		})
 	})

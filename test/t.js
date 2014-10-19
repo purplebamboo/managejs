@@ -5,7 +5,16 @@ var t = require('../index.js');
 var testStr = require('fs').readFileSync('./test/simple.js').toString();
 
 
-var root = t.transfer(testStr);
+var testNode = t.transfer(testStr,{remainSpace:false,remainComment:true});
 
 
-console.log(root.find('ForStatement','a').append('var test = 1;').prepend('var aa = 1;').stringify());
+
+
+t = testNode.findById('WhileStatement','2')
+			var ob = testNode.findById('ObjectExpression','test2').getCurrentStatement()
+			t.insertBefore(ob)
+
+console.log(testNode.find('WhileStatement','2').length);
+
+
+//console.log(root.find('FunctionDeclaration','aa').stringify());
