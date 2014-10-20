@@ -206,7 +206,8 @@ root.findById('Literal',function(jsNode){
  - @param  {object} options  配置项
  - @param  {boolean} options.remainSpace 是否保留各种空格，为true的话会保留以前的格式。会消耗性能，并且容易出错
  - @param  {boolean} options.remainComment 是否保留注释
- - @return {JsNodeList}      根节点，JsNodeList对象，可以使用提供的一系列方法
+ - @return {JsNodeList}      根节点，JsNodeList对象，可以使用提供的一系列方法 
+
 
 用于将一段javascript字符串 解析成一个JsNodeList对象
  
@@ -222,6 +223,7 @@ findById，findByString，find，findByFn，详见介绍章节选择器部分
 ### 通用api
 #### stringify()
 
+
 解析当前节点生成源代码
 
 example：
@@ -230,9 +232,12 @@ root = require('managejs').transfer("var test222 = 'xxxx'");
 root.stringify(); //var test222 = 'xxxx'
 ```
 #### getCurrentStatement()
+
+
 获取当前节点所在的语句(statement)节点
 
 example
+
 ```js
 root = require('managejs').transfer("var test222 = 'xxxx'");
 root.findById('Literal','test*')    // 'xx'
@@ -245,6 +250,7 @@ root.findById('Literal','test*').getCurrentStatement() //var test222 = 'xxxx'
 替换当前节点集合
 
 example
+
 ```js
 root = require('managejs').transfer("var test222 = 'xxxx'");
 root.findById('Literal','xx').replaceWith("'hahaha'"); //var test222 = 'hahaha'
@@ -252,7 +258,9 @@ root.findById('Literal','xx').replaceWith("'hahaha'"); //var test222 = 'hahaha'
 
 #### item()
  - @param  {JsNodelist} index 节点的位置
- - @return void
+ - @return void 
+
+
 类似jQuery里面的item。选择器获取到的都是节点集合JsNodeList可以使用这个item返回里面的某一个节点生成的新的JsNodeList。
 
 
@@ -263,9 +271,12 @@ root.findById('Literal','xx').replaceWith("'hahaha'"); //var test222 = 'hahaha'
 #### insertBefore(nodelist)
  - @param  {JsNodelist} nodelist 指定节点
  - @return void
+
+
 用于将当前的节点插入到指定节点的前面
 
 example:
+
 ```js
 root = require('managejs').transfer("var a = 'xxxx';var b = 'xx'");
 test = root.findById('Literal','a').getCurrentStatement()
@@ -277,9 +288,12 @@ root.findByString('VariableDeclaration','b').insertBefore(test)
 #### insertAfter(nodelist)
  - @param  {JsNodelist} nodelist指定节点
  - @return void
+
+
 用于将当前的节点插入到指定节点的后面
 
 example:
+
 ```js
 root = require('managejs').transfer("var a = 'xxxx';var b = 'xx'");
 test = root.findById('Literal','a').getCurrentStatement()
@@ -293,9 +307,12 @@ Function包括 FunctionDeclaration，FunctionExpression。
 #### getParam(index)
  - @param  {int} index 索引，可以为负数
  - @return {JsNodeList} 返回获取到的节点
+
+
 用于通过index获取参数节点。
 
 example:
+
 ```js
 root = require('managejs').transfer("var a = function(m,n){}");
 root.find('FunctionDeclaration','a').getParam(0).stringify();
@@ -305,9 +322,12 @@ root.find('FunctionDeclaration','a').getParam(0).stringify();
 #### addParam(identifyName)
  - @param  {string} 需要添加的参数名
  - @return {JsNodeList} 返回新增的节点
+
+
 增加新的参数
 
 example:
+
 ```js
 root = require('managejs').transfer("var a = function(m,n){}");
 root.find('FunctionDeclaration','a').addParam('x').stringify();
@@ -316,8 +336,12 @@ root.find('FunctionDeclaration','a').addParam('x').stringify();
 
 #### allParam()
  - @return {JsNodeList} 返回所有参数节点
+
+
 获取所有的参数节点
+
 example:
+
 ```js
 root = require('managejs').transfer("var a = function(m,n){}");
 root.find('FunctionDeclaration','a').allParam().stringify();
@@ -328,8 +352,12 @@ root.find('FunctionDeclaration','a').allParam().stringify();
  - @param  {int} howmany 要删除的项目数量。如果设置为 0，则不会删除项目。
  - @param  {string|JsNodeList} item1, ..., itemX 可选。向数组添加的新项目。
  - @return {JsNodeList} 返回删除的数组节点
+
+
 使用类似数组的splice方法。来操作参数
+
 example:
+
 ```js
 root = require('managejs').transfer("function test(a,b,c){}");
 root.find('CallExpression','test').splice(1,1,'m').stringify();//m
@@ -340,9 +368,12 @@ root.find('CallExpression','test').splice(1,1,'m').stringify();//m
 
  - @param  {string|JsNodeList} 需要append的类容，可以是字符串也可以是JsNodeList对象
  - @return {JsNodeList} 返回当前节点
+
+
 在｛｝最后面添加新的语句节点
 
 example:
+
 ```js
 root = require('managejs').transfer("var a = function(m,n){var t = 0;}");
 root.find('FunctionDeclaration','a').append('var test =1;').stringify();
@@ -352,8 +383,12 @@ root.find('FunctionDeclaration','a').append('var test =1;').stringify();
 #### prepend(nodelist)
  - @param  {string|JsNodeList} 需要append的类容，可以是字符串也可以是JsNodeList对象
  - @return {JsNodeList} 返回当前节点
+
+
 在｛｝最前面添加语句节点
+
 example:
+
 ```js
 root = require('managejs').transfer("var a = function(m,n){var t = 0;}");
 root.find('FunctionDeclaration','a').prepend('var test =1;').stringify();
@@ -366,8 +401,11 @@ root.find('FunctionDeclaration','a').prepend('var test =1;').stringify();
  - @param  {string} key，key的值
  - @return {JsNodeList} 返回获取到值的节点
 
+
 通过key获取值节点
+
 example:
+
 ```js
 root = require('managejs').transfer("var a = {m:1,n:2}");
 root.find('ObjectExpression','a').get(0).stringify();
@@ -378,8 +416,12 @@ root.find('ObjectExpression','a').get(0).stringify();
  - @param  {string|JsNodeList} 需要增加的key
  - @param  {string|JsNodeList} 需要增加的value
  - @return {JsNodeList} 返回新增的节点
+
+
 增加节点
+
 example:
+
 ```js
 root = require('managejs').transfer("var a = {m:1,n:2}");
 root.find('ObjectExpression','a').add('s','3');
@@ -391,8 +433,12 @@ root.find('ObjectExpression','a').get(-1).stringify();
 #### remove(key)
  - @param  {string} key，key的值
  - @return {void} 
+
+
 删除节点
+
 example:
+
 ```js
 root = require('managejs').transfer("var a = {m:1,n:2}");
 root.find('ObjectExpression','a').add('s','3');
@@ -404,8 +450,12 @@ root.find('ObjectExpression','a').get(-1).stringify();
 #### get(index)
  - @param  {int} index，索引可以为负数，代表从后面开始
  - @return {JsNodeList} 返回获取到值的节点
+
+
 获取数组节点
+
 example:
+
 ```js
 root = require('managejs').transfer("var a = [1,2,3,4]");
 root.find('ArrayExpression','a').get(-1).stringify();//4
@@ -416,8 +466,12 @@ root.find('ArrayExpression','a').get(-1).stringify();//4
  - @param  {int} howmany 要删除的项目数量。如果设置为 0，则不会删除项目。
  - @param  {string|JsNodeList} item1, ..., itemX 可选。向数组添加的新项目。
  - @return {JsNodeList} 返回删除的数组节点
+
+
 类似数组的splice方法。
+
 example:
+
 ```js
 root = require('managejs').transfer("var a = [1,2,3,4]");
 root.find('ArrayExpression','a').splice(1,1,'4').stringify();//[1,4,3,4]
@@ -426,7 +480,10 @@ root.find('ArrayExpression','a').splice(1,1,'4').stringify();//[1,4,3,4]
 #### push(nodelist)
  - @param  {string|JsNodelist} 需要添加的类容
  - @return {JsNodeList} 返回新增的节点
+
+
 添加新的节点。
+
 example:
 ```js
 root = require('managejs').transfer("var a = [1,2,3,4]");
@@ -442,9 +499,12 @@ root.find('ArrayExpression','a').get(-1).stringify();//5;
 #### append(nodelist)
  - @param  {string|JsNodeList} 需要append的类容，可以是字符串也可以是JsNodeList对象
  - @return {JsNodeList} 返回当前节点
+
+
 在｛｝最后面添加新的语句节点
 
 example:
+
 ```js
 root = require('managejs').transfer("if(a){}");
 root.find('IfStatement','a').append('var test =1;').stringify();
@@ -454,8 +514,12 @@ root.find('IfStatement','a').append('var test =1;').stringify();
 #### prepend(nodelist)
  - @param  {string|JsNodeList} 需要append的类容，可以是字符串也可以是JsNodeList对象
  - @return {JsNodeList} 返回当前节点
+
+
 在｛｝最前面添加语句节点
+
 example:
+
 ```js
 root = require('managejs').transfer("if(a){}");
 root.find('IfStatement','a').append('var test =1;').stringify();
@@ -468,9 +532,12 @@ root.find('IfStatement','a').append('var test =1;').stringify();
 #### get(index)
  - @param  {int} index，索引可以为负数，代表从后面开始
  - @return {JsNodeList} 返回获取到值的节点
+
+
 用于通过index获取参数节点。
 
 example:
+
 ```js
 root = require('managejs').transfer("var a = test(m,n)");
 root.find('CallExpression','a').get(-1).stringify();
@@ -481,8 +548,12 @@ root.find('CallExpression','a').get(-1).stringify();
  - @param  {int} howmany 要删除的项目数量。如果设置为 0，则不会删除项目。
  - @param  {string|JsNodeList} item1, ..., itemX 可选。向数组添加的新项目。
  - @return {JsNodeList} 返回删除的数组节点
+
+
 类似数组的splice方法。用来操作参数。
+
 example:
+
 ```js
 root = require('managejs').transfer("test(a,b,c)");
 root.find('CallExpression','test').splice(1,1,'m');
