@@ -295,7 +295,7 @@ Function包括 FunctionDeclaration，FunctionExpression。
 example:
 ```js
 root = require('managejs').transfer("var a = function(m,n){}");
-root.find('FunctionDeclaration','a').getParam(0).stringify();
+root.find('FunctionExpression','a').getParam(0).stringify();
 //m
 ```
 
@@ -307,7 +307,7 @@ root.find('FunctionDeclaration','a').getParam(0).stringify();
 example:
 ```js
 root = require('managejs').transfer("var a = function(m,n){}");
-root.find('FunctionDeclaration','a').addParam('x').stringify();
+root.find('FunctionExpression','a').addParam('x').stringify();
 //x
 ```
 
@@ -317,7 +317,7 @@ root.find('FunctionDeclaration','a').addParam('x').stringify();
 example:
 ```js
 root = require('managejs').transfer("var a = function(m,n){}");
-root.find('FunctionDeclaration','a').allParam().stringify();
+root.find('FunctionExpression','a').allParam().stringify();
 //mn
 ```
 #### spliceParam()
@@ -329,7 +329,7 @@ root.find('FunctionDeclaration','a').allParam().stringify();
 example:
 ```js
 root = require('managejs').transfer("function test(a,b,c){}");
-root.find('CallExpression','test').splice(1,1,'m').stringify();//m
+root.find('FunctionDeclaration','test').splice(1,1,'m').stringify();//m
 
 ```
 
@@ -342,7 +342,7 @@ root.find('CallExpression','test').splice(1,1,'m').stringify();//m
 example:
 ```js
 root = require('managejs').transfer("var a = function(m,n){var t = 0;}");
-root.find('FunctionDeclaration','a').append('var test =1;').stringify();
+root.find('FunctionExpression','a').append('var test =1;').stringify();
 ```
 
 
@@ -353,7 +353,7 @@ root.find('FunctionDeclaration','a').append('var test =1;').stringify();
 example:
 ```js
 root = require('managejs').transfer("var a = function(m,n){var t = 0;}");
-root.find('FunctionDeclaration','a').prepend('var test =1;').stringify();
+root.find('FunctionExpression','a').prepend('var test =1;').stringify();
 ```
 
 ### ObjectExpression
