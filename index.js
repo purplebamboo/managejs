@@ -1,4 +1,4 @@
 
-var queryjs = require("./lib/query.js");
+var managejs = require("./lib/managejs.js");
 
-exports.transfer = queryjs.transfer;
+exports.transfer = managejs.transfer;

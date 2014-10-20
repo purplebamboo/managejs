@@ -1,10 +1,10 @@
-# queryjs [![Build Status](https://travis-ci.org/purplebamboo/queryjs.svg?branch=master)](https://travis-ci.org/purplebamboo/queryjs)
+# managejs [![Build Status](https://travis-ci.org/purplebamboo/managejs.svg?branch=master)](https://travis-ci.org/purplebamboo/managejs)
 
-queryjs是使用nodejs编写的基于语法树的js源码分析操作工具。通过queryjs，可以使用类似jQuery的操作方式来操作你的javascript源代码。
+managejs是使用nodejs编写的基于语法树的js源码分析操作工具。通过managejs，可以使用类似jQuery的操作方式来操作你的javascript源代码。
 
 ## Installation
 
-`npm install queryjs`
+`npm install managejs`
 
 ## Test
 `npm test`
@@ -12,11 +12,11 @@ queryjs是使用nodejs编写的基于语法树的js源码分析操作工具。�
 
 ```js
 
-var queryjs = require('queryjs');
+var managejs = require('managejs');
 
 var testStr = 'var a = function (m,n){}';
 
-var rootNode = queryjs.transfer(testStr);//return root node
+var rootNode = managejs.transfer(testStr);//return root node
 
 var fnNodes = rootNode.find('FunctionExpression','a');
 
@@ -86,7 +86,7 @@ javascript源码被词法语法分析后，会变成语法树。每个树节点�
 
 ### 选择器
 
-queryjs使用节点类型+标识符的方式来查找定位节点。之后这些节点会具有一系列的方法用于处理当前节点。并且支持链式操作可以继续在此节点的基础上往下查找。
+managejs使用节点类型+标识符的方式来查找定位节点。之后这些节点会具有一系列的方法用于处理当前节点。并且支持链式操作可以继续在此节点的基础上往下查找。
 
 选择器有四个查找函数：
 #### 1.findById
@@ -129,7 +129,7 @@ for(exp){}
 	 
 example:
 ```js
-root = require('queryjs').transfer("var test222 = 'xxxx'");
+root = require('managejs').transfer("var test222 = 'xxxx'");
 root.findById('Literal','test');
 ```
 
@@ -145,7 +145,7 @@ root.findById('Literal','test');
 	 
 example：
 ```js
-root = require('queryjs').transfer("var test222 = 'xxxx'");
+root = require('managejs').transfer("var test222 = 'xxxx'");
 root.findByString('Literal','xx');
 
 ```
@@ -159,7 +159,7 @@ root.findByString('Literal','xx');
 
 example：
 ```js
-root = require('queryjs').transfer("var test222 = 'xxxx'");
+root = require('managejs').transfer("var test222 = 'xxxx'");
 root.find('Literal','xx');
 //sam as 
 root.find('Literal','test');
@@ -178,7 +178,7 @@ root.find('Literal','test');
 	 
 example
 ```js
-root = require('queryjs').transfer("var test222 = 'xxxx'");
+root = require('managejs').transfer("var test222 = 'xxxx'");
 root.findById('Literal',function(jsNode){
  console.log(jsNode.astObj)  //抽象语法树节点
  console.log(jsNode.stringify()) //将当前节点解析为字符串
@@ -209,7 +209,7 @@ root.findById('Literal',function(jsNode){
  
 example
 ```js
-root = require('queryjs').transfer("code");
+root = require('managejs').transfer("code");
 root.stringify();
 ```
 ### 选择器
@@ -223,7 +223,7 @@ findById，findByString，find，findByFn，详见介绍章节选择器部分
 
 example：
 ```js
-root = require('queryjs').transfer("var test222 = 'xxxx'");
+root = require('managejs').transfer("var test222 = 'xxxx'");
 root.stringify(); //var test222 = 'xxxx'
 ```
 #### getCurrentStatement()
@@ -231,7 +231,7 @@ root.stringify(); //var test222 = 'xxxx'
 
 example
 ```js
-root = require('queryjs').transfer("var test222 = 'xxxx'");
+root = require('managejs').transfer("var test222 = 'xxxx'");
 root.findById('Literal','test*')    // 'xx'
 root.findById('Literal','test*').getCurrentStatement() //var test222 = 'xxxx'
 ```
@@ -243,7 +243,7 @@ root.findById('Literal','test*').getCurrentStatement() //var test222 = 'xxxx'
 
 example
 ```js
-root = require('queryjs').transfer("var test222 = 'xxxx'");
+root = require('managejs').transfer("var test222 = 'xxxx'");
 root.findById('Literal','xx').replaceWith("'hahaha'"); //var test222 = 'hahaha'
 ```
 
@@ -264,7 +264,7 @@ root.findById('Literal','xx').replaceWith("'hahaha'"); //var test222 = 'hahaha'
 
 example:
 ```js
-root = require('queryjs').transfer("var a = 'xxxx';var b = 'xx'");
+root = require('managejs').transfer("var a = 'xxxx';var b = 'xx'");
 test = root.findById('Literal','a').getCurrentStatement()
 root.findByString('VariableDeclaration','b').insertBefore(test) 
 
@@ -278,7 +278,7 @@ root.findByString('VariableDeclaration','b').insertBefore(test)
 
 example:
 ```js
-root = require('queryjs').transfer("var a = 'xxxx';var b = 'xx'");
+root = require('managejs').transfer("var a = 'xxxx';var b = 'xx'");
 test = root.findById('Literal','a').getCurrentStatement()
 root.findByString('VariableDeclaration','b').insertAfter(test) 
 ```
@@ -294,7 +294,7 @@ Function包括 FunctionDeclaration，FunctionExpression。
 
 example:
 ```js
-root = require('queryjs').transfer("var a = function(m,n){}");
+root = require('managejs').transfer("var a = function(m,n){}");
 root.find('FunctionDeclaration','a').getParam(0).stringify();
 //m
 ```
@@ -306,7 +306,7 @@ root.find('FunctionDeclaration','a').getParam(0).stringify();
 
 example:
 ```js
-root = require('queryjs').transfer("var a = function(m,n){}");
+root = require('managejs').transfer("var a = function(m,n){}");
 root.find('FunctionDeclaration','a').addParam('x').stringify();
 //x
 ```
@@ -316,7 +316,7 @@ root.find('FunctionDeclaration','a').addParam('x').stringify();
 获取所有的参数节点
 example:
 ```js
-root = require('queryjs').transfer("var a = function(m,n){}");
+root = require('managejs').transfer("var a = function(m,n){}");
 root.find('FunctionDeclaration','a').allParam().stringify();
 //mn
 ```
@@ -328,7 +328,7 @@ root.find('FunctionDeclaration','a').allParam().stringify();
 使用类似数组的splice方法。来操作参数
 example:
 ```js
-root = require('queryjs').transfer("function test(a,b,c){}");
+root = require('managejs').transfer("function test(a,b,c){}");
 root.find('CallExpression','test').splice(1,1,'m').stringify();//m
 
 ```
@@ -341,7 +341,7 @@ root.find('CallExpression','test').splice(1,1,'m').stringify();//m
 
 example:
 ```js
-root = require('queryjs').transfer("var a = function(m,n){var t = 0;}");
+root = require('managejs').transfer("var a = function(m,n){var t = 0;}");
 root.find('FunctionDeclaration','a').append('var test =1;').stringify();
 ```
 
@@ -352,7 +352,7 @@ root.find('FunctionDeclaration','a').append('var test =1;').stringify();
 在｛｝最前面添加语句节点
 example:
 ```js
-root = require('queryjs').transfer("var a = function(m,n){var t = 0;}");
+root = require('managejs').transfer("var a = function(m,n){var t = 0;}");
 root.find('FunctionDeclaration','a').prepend('var test =1;').stringify();
 ```
 
@@ -366,7 +366,7 @@ root.find('FunctionDeclaration','a').prepend('var test =1;').stringify();
 通过key获取值节点
 example:
 ```js
-root = require('queryjs').transfer("var a = {m:1,n:2}");
+root = require('managejs').transfer("var a = {m:1,n:2}");
 root.find('ObjectExpression','a').get(0).stringify();
 //1
 ```
@@ -378,7 +378,7 @@ root.find('ObjectExpression','a').get(0).stringify();
 增加节点
 example:
 ```js
-root = require('queryjs').transfer("var a = {m:1,n:2}");
+root = require('managejs').transfer("var a = {m:1,n:2}");
 root.find('ObjectExpression','a').add('s','3');
 root.find('ObjectExpression','a').get(-1).stringify();
 //3
@@ -391,7 +391,7 @@ root.find('ObjectExpression','a').get(-1).stringify();
 删除节点
 example:
 ```js
-root = require('queryjs').transfer("var a = {m:1,n:2}");
+root = require('managejs').transfer("var a = {m:1,n:2}");
 root.find('ObjectExpression','a').add('s','3');
 root.find('ObjectExpression','a').get(-1).stringify();
 //3
@@ -404,7 +404,7 @@ root.find('ObjectExpression','a').get(-1).stringify();
 获取数组节点
 example:
 ```js
-root = require('queryjs').transfer("var a = [1,2,3,4]");
+root = require('managejs').transfer("var a = [1,2,3,4]");
 root.find('ArrayExpression','a').get(-1).stringify();//4
 
 ```
@@ -416,7 +416,7 @@ root.find('ArrayExpression','a').get(-1).stringify();//4
 类似数组的splice方法。
 example:
 ```js
-root = require('queryjs').transfer("var a = [1,2,3,4]");
+root = require('managejs').transfer("var a = [1,2,3,4]");
 root.find('ArrayExpression','a').splice(1,1,'4').stringify();//[1,4,3,4]
 
 ```
@@ -426,7 +426,7 @@ root.find('ArrayExpression','a').splice(1,1,'4').stringify();//[1,4,3,4]
 添加新的节点。
 example:
 ```js
-root = require('queryjs').transfer("var a = [1,2,3,4]");
+root = require('managejs').transfer("var a = [1,2,3,4]");
 root.find('ArrayExpression','a').push('5');
 root.find('ArrayExpression','a').get(-1).stringify();//5;
 
@@ -443,7 +443,7 @@ root.find('ArrayExpression','a').get(-1).stringify();//5;
 
 example:
 ```js
-root = require('queryjs').transfer("if(a){}");
+root = require('managejs').transfer("if(a){}");
 root.find('IfStatement','a').append('var test =1;').stringify();
 ```
 
@@ -454,7 +454,7 @@ root.find('IfStatement','a').append('var test =1;').stringify();
 在｛｝最前面添加语句节点
 example:
 ```js
-root = require('queryjs').transfer("if(a){}");
+root = require('managejs').transfer("if(a){}");
 root.find('IfStatement','a').append('var test =1;').stringify();
 ```
 
@@ -469,7 +469,7 @@ root.find('IfStatement','a').append('var test =1;').stringify();
 
 example:
 ```js
-root = require('queryjs').transfer("var a = test(m,n)");
+root = require('managejs').transfer("var a = test(m,n)");
 root.find('CallExpression','a').get(-1).stringify();
 //n
 ```
@@ -481,7 +481,7 @@ root.find('CallExpression','a').get(-1).stringify();
 类似数组的splice方法。用来操作参数。
 example:
 ```js
-root = require('queryjs').transfer("test(a,b,c)");
+root = require('managejs').transfer("test(a,b,c)");
 root.find('CallExpression','test').splice(1,1,'m');
 root.find('CallExpression','test').stringify();//test(a,m,c)
 
