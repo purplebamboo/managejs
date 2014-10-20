@@ -141,6 +141,7 @@ root.findById('Literal','test');
 - return {JsNodeList} 返回找到的节点集合对象
 
 
+
 使用字符串匹配，会将当前节点解析成字符串进行查找
 	 
 example：
@@ -154,6 +155,7 @@ root.findByString('Literal','xx');
 - param {string} reg 匹配的字符串，支持正则写法。
 
 - return {JsNodeList} 返回找到的节点集合对象
+
 
 查找函数，是findById与findByString的结合体，会先尝试使用findById查找，如果找不到，就使用字符串匹配查找。
 
@@ -173,6 +175,7 @@ root.find('Literal','test');
 - param {function} fn 匹配的函数，函数返回值为true代表匹配成功，否则匹配失败。
 
 - return {JsNodeList} 返回找到的节点集合对象
+
 	  
 自定义函数匹配，会将当前jsNode作为参数注入。
 	 
