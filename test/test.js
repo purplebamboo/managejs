@@ -123,6 +123,12 @@ describe('Function',function(){
 
 
 	})
+	describe('#spliceParam',function(){
+		it('use spliceParam to manage params',function(){
+			assert.equal('a',testNode.find('FunctionDeclaration','test$').spliceParam(0,1,'l').stringify())
+			assert.equal('lb',testNode.find('FunctionDeclaration','test$').allParam().stringify())
+		})
+	})
 	describe('#append and prepend',function(){
 		it('function can appnd string',function(){
 			var fun = testNode.find('FunctionExpression','test2')

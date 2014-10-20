@@ -30,7 +30,7 @@ console.log(fnNodes.stringify());
 ```
 * `transfer`用于返回javascript源码的根节点
 * `find`使用**语法树节点类型**，还有对应的**标识**来查找节点
-*  `append`用于往function里面注入一段代码
+* `append`用于往function里面注入一段代码
 
 ## Introduction
 ### 语法树节点类型（ast node type）
@@ -294,7 +294,7 @@ Function包括 FunctionDeclaration，FunctionExpression。
 
 example:
 ```js
-root = require('queryjs').transfer("var a = function(m,n){});
+root = require('queryjs').transfer("var a = function(m,n){}");
 root.find('FunctionDeclaration','a').getParam(0).stringify();
 //m
 ```
@@ -306,7 +306,7 @@ root.find('FunctionDeclaration','a').getParam(0).stringify();
 
 example:
 ```js
-root = require('queryjs').transfer("var a = function(m,n){});
+root = require('queryjs').transfer("var a = function(m,n){}");
 root.find('FunctionDeclaration','a').addParam('x').stringify();
 //x
 ```
@@ -316,11 +316,22 @@ root.find('FunctionDeclaration','a').addParam('x').stringify();
 获取所有的参数节点
 example:
 ```js
-root = require('queryjs').transfer("var a = function(m,n){});
+root = require('queryjs').transfer("var a = function(m,n){}");
 root.find('FunctionDeclaration','a').allParam().stringify();
 //mn
 ```
+#### spliceParam()
+ - @param  {int} index，整数，规定添加/删除项目的位置，使用负数可从数组结尾处规定位置。
+ - @param  {int} howmany 要删除的项目数量。如果设置为 0，则不会删除项目。
+ - @param  {string|JsNodeList} item1, ..., itemX 可选。向数组添加的新项目。
+ - @return {JsNodeList} 返回删除的数组节点
+使用类似数组的splice方法。来操作参数
+example:
+```js
+root = require('queryjs').transfer("function test(a,b,c){}");
+root.find('CallExpression','test').splice(1,1,'m').stringify();//m
 
+```
 
 #### append(nodelist)
 
@@ -330,7 +341,7 @@ root.find('FunctionDeclaration','a').allParam().stringify();
 
 example:
 ```js
-root = require('queryjs').transfer("var a = function(m,n){var t = 0;});
+root = require('queryjs').transfer("var a = function(m,n){var t = 0;}");
 root.find('FunctionDeclaration','a').append('var test =1;').stringify();
 ```
 
@@ -341,7 +352,7 @@ root.find('FunctionDeclaration','a').append('var test =1;').stringify();
 在｛｝最前面添加语句节点
 example:
 ```js
-root = require('queryjs').transfer("var a = function(m,n){var t = 0;});
+root = require('queryjs').transfer("var a = function(m,n){var t = 0;}");
 root.find('FunctionDeclaration','a').prepend('var test =1;').stringify();
 ```
 
@@ -355,7 +366,7 @@ root.find('FunctionDeclaration','a').prepend('var test =1;').stringify();
 通过key获取值节点
 example:
 ```js
-root = require('queryjs').transfer("var a = {m:1,n:2});
+root = require('queryjs').transfer("var a = {m:1,n:2}");
 root.find('ObjectExpression','a').get(0).stringify();
 //1
 ```
@@ -367,7 +378,7 @@ root.find('ObjectExpression','a').get(0).stringify();
 增加节点
 example:
 ```js
-root = require('queryjs').transfer("var a = {m:1,n:2});
+root = require('queryjs').transfer("var a = {m:1,n:2}");
 root.find('ObjectExpression','a').add('s','3');
 root.find('ObjectExpression','a').get(-1).stringify();
 //3
@@ -380,7 +391,7 @@ root.find('ObjectExpression','a').get(-1).stringify();
 删除节点
 example:
 ```js
-root = require('queryjs').transfer("var a = {m:1,n:2});
+root = require('queryjs').transfer("var a = {m:1,n:2}");
 root.find('ObjectExpression','a').add('s','3');
 root.find('ObjectExpression','a').get(-1).stringify();
 //3
@@ -393,7 +404,7 @@ root.find('ObjectExpression','a').get(-1).stringify();
 获取数组节点
 example:
 ```js
-root = require('queryjs').transfer("var a = [1,2,3,4]);
+root = require('queryjs').transfer("var a = [1,2,3,4]");
 root.find('ArrayExpression','a').get(-1).stringify();//4
 
 ```
@@ -401,11 +412,11 @@ root.find('ArrayExpression','a').get(-1).stringify();//4
  - @param  {int} index，整数，规定添加/删除项目的位置，使用负数可从数组结尾处规定位置。
  - @param  {int} howmany 要删除的项目数量。如果设置为 0，则不会删除项目。
  - @param  {string|JsNodeList} item1, ..., itemX 可选。向数组添加的新项目。
- - @return {JsNodeList} 返回新的数组节点
+ - @return {JsNodeList} 返回删除的数组节点
 类似数组的splice方法。
 example:
 ```js
-root = require('queryjs').transfer("var a = [1,2,3,4]);
+root = require('queryjs').transfer("var a = [1,2,3,4]");
 root.find('ArrayExpression','a').splice(1,1,'4').stringify();//[1,4,3,4]
 
 ```
@@ -415,7 +426,7 @@ root.find('ArrayExpression','a').splice(1,1,'4').stringify();//[1,4,3,4]
 添加新的节点。
 example:
 ```js
-root = require('queryjs').transfer("var a = [1,2,3,4]);
+root = require('queryjs').transfer("var a = [1,2,3,4]");
 root.find('ArrayExpression','a').push('5');
 root.find('ArrayExpression','a').get(-1).stringify();//5;
 
@@ -462,7 +473,19 @@ root = require('queryjs').transfer("var a = test(m,n)");
 root.find('CallExpression','a').get(-1).stringify();
 //n
 ```
+#### spliceParam()
+ - @param  {int} index，整数，规定添加/删除项目的位置，使用负数可从数组结尾处规定位置。
+ - @param  {int} howmany 要删除的项目数量。如果设置为 0，则不会删除项目。
+ - @param  {string|JsNodeList} item1, ..., itemX 可选。向数组添加的新项目。
+ - @return {JsNodeList} 返回删除的数组节点
+类似数组的splice方法。用来操作参数。
+example:
+```js
+root = require('queryjs').transfer("test(a,b,c)");
+root.find('CallExpression','test').splice(1,1,'m');
+root.find('CallExpression','test').stringify();//test(a,m,c)
 
+```
 
 ## License
 
