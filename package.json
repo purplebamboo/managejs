@@ -1,6 +1,6 @@
 {
   "name": "managejs",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "a lib let you use jquery style to manage javascript source code。",
   "main": "index.js",
   "scripts": {
