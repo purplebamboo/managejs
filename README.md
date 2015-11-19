@@ -480,7 +480,7 @@ root.find('IfStatement','a').prepend('var test =1;').stringify();
 ### CallExpression
 ----------
 
-#### get(index)
+#### getParam(index)
  - @param  {int} index  the index,can be negative number
  - @return {JsNodeList} return the finded node
 
@@ -493,6 +493,10 @@ root = require('managejs').transfer("var a = test(m,n)");
 root.find('CallExpression','a').get(-1).stringify();
 //n
 ```
+
+#### allParam()
+ - @return {JsNodeList} return a JsNodelist contain all param JsNode
+
 #### spliceParam()
  - @param  {int} index  indicate the position of add/delete a item,can use A negative number which will start from the last.
  - @param  {int} howmany  the number of items to be deleted.can be 0.

@@ -531,7 +531,7 @@ root.find('IfStatement','a').prepend('var test =1;').stringify();
 ### CallExpression
 ----------
 
-#### get(index)
+#### getParam(index)
  - @param  {int} index，索引可以为负数，代表从后面开始
  - @return {JsNodeList} 返回获取到值的节点
 
@@ -545,6 +545,10 @@ root = require('managejs').transfer("var a = test(m,n)");
 root.find('CallExpression','a').get(-1).stringify();
 //n
 ```
+
+#### allParam()
+ - @return {JsNodeList} 返回所有参数节点
+
 #### spliceParam()
  - @param  {int} index，整数，规定添加/删除项目的位置，使用负数可从数组结尾处规定位置。
  - @param  {int} howmany 要删除的项目数量。如果设置为 0，则不会删除项目。
